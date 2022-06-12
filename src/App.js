@@ -1,23 +1,77 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
+import { Routes, Route, Link } from "react-router-dom";
+import { authRoutes, unAuthRoutes } from "./components/routes";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import {useSelector} from "react-redux"
 
 function App() {
+  const [user, setUser] = useState({});
+  const isUser = Object.keys(user).length;
+  const {token} = useSelector(state=>state.user)
+  console.log(token)
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <Routes>
+        {token === ""
+          ? unAuthRoutes.map(({ pathname, component, exact, id }) => {
+              return (
+                <Route
+                  key={id}
+                  path={pathname}
+                  element={component}
+                  exact={exact}
+                />
+              );
+            })
+          : authRoutes.map(({ pathname, component, exact, id }) => {
+              return (
+                <Route
+                  key={id}
+                  path={pathname}
+                  element={component}
+                  exact={exact}
+                />
+              );
+            })}
+        {/* {
+             unAuthRoutes.map(({ pathname, component, exact, id }) => {
+              return (
+                <Route
+                  key={id}
+                  path={pathname}
+                  element={component}
+                  exact={exact}
+                />
+              );
+            })
+           } */}
+        {/* {
+             authRoutes.map(({ pathname, component, exact, id }) => {
+              return (
+                <Route
+                  key={id}
+                  path={pathname}
+                  element={component}
+                  exact={exact}
+                />
+              );
+            })
+           } */}
+      </Routes>
+        <ToastContainer
+          position="bottom-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+        />
     </div>
   );
 }
