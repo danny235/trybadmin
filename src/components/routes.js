@@ -1,45 +1,19 @@
-import AuthRoot from "../auth/AuthRoot";
 import Login from "../auth/Login";
-import SignUp from "../auth/SignUp";
-import BetHistory from "../main/BetHistory";
+import BetStatistics from "../main/BetStatistics";
 import Dashboard from "../main/Dashboard";
 import Deposit from "../main/Deposit";
-import DepositHistory from "../main/DepositHistory";
-import WithdrawalHistory from "../main/WithdrawalHistory";
-import HomeScreen from "../main/HomeScreen";
 import Withdrawal from "../main/Withdrawal";
-import Profile from "../main/Profile";
-import Invitation from "../main/Invitation";
+import UsersOverView from "../main/UsersOverView"
 
 const unAuthRoutes = [
+ 
   {
     pathname: "/",
-    exact: true,
-    name: "auth",
-    id: "auth",
-    component: <AuthRoot />,
-  },
-  {
-    pathname: "/login",
     exact: true,
     name: "login",
     id: "login",
     component: <Login />,
-  },
-  {
-    pathname: "/signup",
-    exact: true,
-    name: "signup",
-    id: "auth",
-    component: <SignUp />,
-  },
-  {
-    pathname: "/signup/:code",
-    exact: true,
-    name: "signup",
-    id: "auth",
-    component: <SignUp />,
-  },
+  }
 ];
 
 const authRoutes = [
@@ -51,61 +25,34 @@ const authRoutes = [
     component: <Dashboard />
   },
   {
-    pathname: "/trade",
+    pathname: "/bet-statistics",
     exact: true,
-    name: "home",
-    id: "home",
-    component: <HomeScreen />
+    name: "betStatistics",
+    id: "betStatistics",
+    component: <BetStatistics />
 },
   {
-    pathname: "/bet-history",
-    exact: true,
-    name: "betHistory",
-    id: "betHistory",
-    component: <BetHistory />
-},
-  {
-    pathname: "/deposit",
+    pathname: "/deposit-history",
     exact: true,
     name: "deposit",
     id: "deposit",
     component: <Deposit />
 },
   {
-    pathname: "/deposit-history",
-    exact: true,
-    name: "depositHistory",
-    id: "depositHistory",
-    component: <DepositHistory />
-},
-  {
     pathname: "/withdrawal-history",
     exact: true,
-    name: "dashboard",
-    id: "dashboard",
-    component: <WithdrawalHistory />
-},
-  {
-    pathname: "/withdraw",
-    exact: true,
-    name: "dashboard",
-    id: "dashboard",
+    name: "withdrawal",
+    id: "withdrawal",
     component: <Withdrawal />
 },
   {
-    pathname: "/profile-settings",
+    pathname: "/users-overview",
     exact: true,
-    name: "profile",
-    id: "profile",
-    component: <Profile />
+    name: "dashboard",
+    id: "dashboard",
+    component: <UsersOverView />
 },
-  {
-    pathname: "/invitation",
-    exact: true,
-    name: "invitation",
-    id: "invitation",
-    component: <Invitation />
-},
+ 
 
 ];
 

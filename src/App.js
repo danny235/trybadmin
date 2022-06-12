@@ -7,10 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import {useSelector} from "react-redux"
 
 function App() {
-  const [user, setUser] = useState({});
-  const isUser = Object.keys(user).length;
   const {token} = useSelector(state=>state.user)
-  console.log(token)
+  
 
   return (
     <div>

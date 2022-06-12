@@ -82,12 +82,12 @@ const CustomColoredBtn = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100px;
-  height: 50px;
+  width: 70px;
+  height: 30px;
   color: ${colors.white};
   background-color: ${props=>props.bgColor};
   font-weight: bold;
-  font-size: 18px;
+  font-size: 15px;
   border-radius: 10px;
   outline: none;
   border: none;
@@ -169,6 +169,17 @@ const GreenSection = styled.div`
   height: 400px;
   width: 100%;
   padding: 10px;
+`;
+
+const OptionCircle = styled.div`
+  background-color: ${props=>props.color};
+  border-radius: 50%;
+  height: 130px;
+  width: 130px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
 `
 
-export { SecondaryBtn, WhiteBtn, Container, StyledInput, CustomColoredBtn, AmountInput, CustomModal, MenuContainer, MenuItem, UploadField, StyledProfileBackground, WhiteSection, GreenSection, WhiteInput };
+export { SecondaryBtn, WhiteBtn, Container, StyledInput, CustomColoredBtn, AmountInput, CustomModal, MenuContainer, MenuItem, UploadField, StyledProfileBackground, WhiteSection, GreenSection, WhiteInput, OptionCircle };
