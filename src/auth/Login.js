@@ -61,11 +61,6 @@ const Login = () => {
           marginBottom: 40,
         }}
       >
-        <Icon
-          icon="akar-icons:arrow-back"
-          style={{ width: 30, height: 30, marginTop: -15 }}
-          onClick={() => navigate(-1)}
-        />
         <h2 style={{ marginLeft: 10 }}>Login</h2>
       </div>
       <Formik
