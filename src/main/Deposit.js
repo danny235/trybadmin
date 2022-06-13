@@ -1,11 +1,20 @@
 import React from "react";
 import { Icon } from "@iconify/react";
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper} from "@mui/material";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Container } from "../styles/styledUtils";
+import { Container, CustomColoredBtn } from "../styles/styledUtils";
+import { colors } from "../components/colors";
 
 const DepositHistory = () => {
- const navigate = useNavigate();
+  const navigate = useNavigate();
   const depositHistory = [
     {
       id: 1,
@@ -60,66 +69,101 @@ const DepositHistory = () => {
   return (
     <div>
       <Container>
-       
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginTop: 10,
-              marginBottom: 40
-            }}
-          >
-            <Icon
-              icon="akar-icons:arrow-back"
-              style={{ width: 30, height: 30, marginTop: -15 }}
-              onClick={() => navigate(-1)}
-            />
-            <h2 style={{ marginLeft: 10 }}>Deposit history</h2>
-          </div>
-       
-        <TableContainer component={Paper}>
-        <Table sx={{ minWidth: "100%" }} aria-label="simple table">
-          <TableHead style={{backgroundColor: "#ccc"}}>
-            <TableRow>
-              <TableCell style={styles.cellStyle}>Date</TableCell>
-              <TableCell style={styles.cellStyle}>Time</TableCell>
-              <TableCell style={styles.cellStyle}>Amount</TableCell>
-              <TableCell style={styles.cellStyle}>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {depositHistory.map((row) => (
-              <TableRow
-                key={row.id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell style={styles.cellStyle} component="th" scope="row">
-                  {row.date}
-                </TableCell>
-                <TableCell style={styles.cellStyle} align="right">{row.time}</TableCell>
-                <TableCell
-                  style={styles.cellStyle}
-                  align="right"
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginTop: 10,
+            marginBottom: 40,
+          }}
+        >
+          <Icon
+            icon="akar-icons:arrow-back"
+            style={{ width: 30, height: 30, marginTop: -15 }}
+            onClick={() => navigate(-1)}
+          />
+          <h2 style={{ marginLeft: 10 }}>Deposits</h2>
+        </div>
+
+        <h3>Pending deposits</h3>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            marginTop: 20,
+            gap: 60,
+            flexWrap: "wrap",
+          }}
+        >
+          {depositHistory?.map((item) => {
+            return (
+              <div style={{display: "flex", flexDirection: "column", alignItems: "center", gap: 10}} key={item.id}>
+                <img
+                  src="https://images.unsplash.com/photo-1561414927-6d86591d0c4f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1373&q=80"
+                  alt="coin"
+                  style={{ width: 100, height: 100, borderRadius: 20 }}
+                />
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    gap: 10,
+                    marginBottom: 15,
+                    alignItems: "center",
+                  }}
                 >
-                  {row.amount}
-                </TableCell>
-                <TableCell style={styles.cellStyle} align="right">
-                  {row.status}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                  <CustomColoredBtn
+                    bgColor={colors.secondary}
+                    style={{fontSize: 10, fontWeight: '400', width: 50, }}
+                  >
+                    Approve
+                  </CustomColoredBtn>
+                  
+                  <CustomColoredBtn
+                    bgColor={colors.red}
+                    style={{fontSize: 10, fontWeight: '400', width: 50, }}
+                  >
+                    Reject
+                  </CustomColoredBtn>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <h3>Completed</h3>
+        <div
+          style={{
+            padding: 15,
+            borderRadius: 40,
+            display: "flex",
+            alignItems: "center",
+
+            marginTop: 20,
+            gap: 70,
+            flexWrap: "wrap",
+          }}
+        >
+          {depositHistory?.map((item) => {
+            return (
+              <div key={item.id}>
+                <img
+                  src="https://images.unsplash.com/photo-1561414927-6d86591d0c4f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1373&q=80"
+                  alt="coin"
+                  style={{ width: 100, height: 100, borderRadius: 20 }}
+                />
+              </div>
+            );
+          })}
+        </div>
       </Container>
     </div>
   );
 };
 
 const styles = {
-    cellStyle: {
-        fontWeight: 'bold'
-    }
-}
+  cellStyle: {
+    fontWeight: "bold",
+  },
+};
 
 export default DepositHistory;
