@@ -134,7 +134,7 @@ const UsersOverView = () => {
             </TableHead>
             <TableBody>
               {usersList
-                .filter((row) => row.username.toLowerCase().search(query) !== -1)
+                .filter((row) => row.username.toLowerCase().search(query) != -1)
                 .map((row) => (
                   <TableRow
                     key={row.id}
