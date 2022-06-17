@@ -5,7 +5,9 @@ const initialState = {
     token: "",
     userFetching: false,
     refreshToken: "",
-    invites: []
+    depositHistory: [],
+    withdrawalHistory: [],
+    userList: []
 }
 
 export const userSlice = createSlice({
@@ -24,21 +26,25 @@ export const userSlice = createSlice({
           updateRefreshToken: (state, action) => {
             state.refreshToken = action.payload;
           },
-          updateInvites: (state, action)=>{
-            state.invites = action.payload
+          updateDepositHistory: (state, action)=>{
+            state.depositHistory = action.payload
+          },
+          updateWithdrawalHistory: (state, action)=>{
+            state.withdrawalHistory = action.payload
           },
           logOutUser: (state) => {
             state.refreshToken = ""
             state.token = ""
             state.userProfile = {}
-            state.invites = []
+            state.depositHistory = []
+            state.withdrawalHistory = []
             storage.removeItem("persist:root")
             
           }
     }
 })
 
-export const {updateUser, updateToken, updateUserFetching, logOutUser, updateRefreshToken, updateInvites} =
+export const {updateUser, updateToken, updateUserFetching, logOutUser, updateRefreshToken, updateDepositHistory, updateWithdrawalHistory} =
   userSlice.actions;
 
 export default userSlice.reducer;

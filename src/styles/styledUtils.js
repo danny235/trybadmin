@@ -91,6 +91,7 @@ const CustomColoredBtn = styled.button`
   border-radius: 10px;
   outline: none;
   border: none;
+  opacity: ${props => props.disabled ? "0.5" : 1}
 `;
 
 const CustomModal = styled.div`

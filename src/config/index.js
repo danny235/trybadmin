@@ -5,7 +5,10 @@ const paths = {
     register: "auth/register/",
     currentUser: "auth/users/me/",
     logout: "auth/logout/",
-    invitedUsers: "auth/invites"
+    invitedUsers: "auth/invites",
+    depositList: "wallet/deposits",
+    withdrawalList: "wallet/withdraws",
+    update: "update/"
 }
 
 export {baseUrl, paths}
