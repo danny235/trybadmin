@@ -53,10 +53,7 @@ const DepositHistory = () => {
       if (response.status === 200) {
         setUpdating(false);
         toast.success(response?.data?.message);
-        // const newDeposit = response?.data["deposit details"];
-        // dispatch(
-        //   updateDepositHistory((oldDeposit) =>[...oldDeposit, newDeposit])
-        // );
+        setModalShow(false)
         forceUpdate()
       }
       console.log(response);
@@ -225,7 +222,7 @@ const DepositHistory = () => {
                           item?.trans_id
                         )
                       }
-                      disabled={updating}
+                      
                     >
                       {updating ? "Updating" : "Approve"}
                     </CustomColoredBtn>
@@ -239,7 +236,7 @@ const DepositHistory = () => {
                           item?.trans_id
                         )
                       }
-                      disabled={updating}
+                      
                     >
                       {updating ? "Updating" : " Reject"}
                     </CustomColoredBtn>
@@ -280,10 +277,6 @@ const DepositHistory = () => {
   );
 };
 
-const styles = {
-  cellStyle: {
-    fontWeight: "bold",
-  },
-};
+
 
 export default DepositHistory;
