@@ -1,18 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Brand from "../components/Brand";
 import { Icon } from "@iconify/react";
-import callAPI from "../utils";
-import { colors } from "../components/colors";
 import {
-  AmountInput,
   Container,
-  CustomColoredBtn,
-  CustomModal,
 } from "../styles/styledUtils";
-import { Link, useNavigate } from "react-router-dom";
-import Dialog from "@mui/material/Dialog";
-import Backdrop from "@mui/material/Backdrop";
-import MenuList from "../components/MenuList";
+import { useNavigate } from "react-router-dom";
+import { updateUsersList } from "../features/user/userSlice";
+import { useSelector, useDispatch } from "react-redux";
+
 import {
   Table,
   TableBody,
@@ -20,70 +14,56 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
 } from "@mui/material";
+import axios from "axios"
+import { baseUrl, paths } from "../config";
 
 const UsersOverView = () => {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
-  const usersList = [
-    {
-      id: 1,
-      username: "Dada",
-      email: "dada@gmail.com",
-      creationDate: "1/02/2022 4:44pm",
-      lastLogin: "1/02/2022 4:44pm",
-    },
-    {
-      id: 2,
-      username: "Mala",
-      email: "dada@gmail.com",
-      creationDate: "1/02/2022 4:44pm",
-      lastLogin: "1/02/2022 4:44pm",
-    },
-    {
-      id: 3,
-      username: "Jada",
-      email: "dada@gmail.com",
-      creationDate: "1/02/2022 4:44pm",
-      lastLogin: "1/02/2022 4:44pm",
-    },
-    {
-      id: 4,
-      username: "Lada",
-      email: "dada@gmail.com",
-      creationDate: "1/02/2022 4:44pm",
-      lastLogin: "1/02/2022 4:44pm",
-    },
-    {
-      id: 5,
-      username: "Cada",
-      email: "dada@gmail.com",
-      creationDate: "1/02/2022 4:44pm",
-      lastLogin: "1/02/2022 4:44pm",
-    },
-    {
-      id: 6,
-      username: "Hada",
-      email: "dada@gmail.com",
-      creationDate: "1/02/2022 4:44pm",
-      lastLogin: "1/02/2022 4:44pm",
-    },
-    {
-      id: 7,
-      username: "Rada",
-      email: "dada@gmail.com",
-      creationDate: "1/02/2022 4:44pm",
-      lastLogin: "1/02/2022 4:44pm",
-    },
-    {
-      id: 8,
-      username: "Dada",
-      email: "dada@gmail.com",
-      creationDate: "1/02/2022 4:44pm",
-      lastLogin: "1/02/2022 4:44pm",
-    },
-  ];
+  const {token, userList} = useSelector(state=>state.user);
+  const dispatch = useDispatch()
+  const fetchUsers = async () => {
+    try{
+
+      const response = await axios.get(`${baseUrl}/${paths.users}`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if(response.status === 200){
+        dispatch(updateUsersList(response.data))
+      }
+    } catch (err) {
+      console.log(err.message)
+    }
+  }
+  const getDate = (stamp) => {
+    let date = new Date(stamp)
+    let monthList = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ];
+    
+    let month = monthList[date.getMonth()];
+    let day = date.getDate();
+    let year = date.getFullYear()
+    return `${month} ${day} ${year}`
+  }
+  
+  useEffect(()=>{
+    fetchUsers()
+  },[])
 
   return (
     <div>
@@ -129,11 +109,11 @@ const UsersOverView = () => {
                 <TableCell style={styles.cellStyle}>Username</TableCell>
                 <TableCell style={styles.cellStyle}>Email</TableCell>
                 <TableCell style={styles.cellStyle}>Creation date</TableCell>
-                <TableCell style={styles.cellStyle}>Last login</TableCell>
+          
               </TableRow>
             </TableHead>
             <TableBody>
-              {usersList
+              {userList
                 .filter((row) => row.username.toLowerCase().search(query) != -1)
                 .map((row) => (
                   <TableRow
@@ -147,15 +127,13 @@ const UsersOverView = () => {
                     >
                       {row.username}
                     </TableCell>
-                    <TableCell style={styles.cellStyle} align="right">
+                    <TableCell style={styles.cellStyle} align="left">
                       {row.email}
                     </TableCell>
-                    <TableCell style={styles.cellStyle} align="right">
-                      {row.creationDate}
+                    <TableCell style={styles.cellStyle} align="left">
+                      {getDate(row?.profile?.date_referred)}
                     </TableCell>
-                    <TableCell style={styles.cellStyle} align="center">
-                      {row.lastLogin}
-                    </TableCell>
+                    
                   </TableRow>
                 ))}
             </TableBody>

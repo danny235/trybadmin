@@ -97,7 +97,7 @@ const WithdrawalHistory = () => {
               style={{ width: 240, height: 240 }}
             />
             <p style={{ fontWeight: "bold" }}>
-              Amount: {modalItem?.amount_to_withdraw}
+              Amount: {modalItem?.amount_to_withdraw} USDT
             </p>
             <p style={{ fontWeight: "bold" }}>Address: </p>
             <div style={{ display: "flex" }}>
@@ -230,10 +230,10 @@ const WithdrawalHistory = () => {
                     >
                       {row.trans_id}
                     </TableCell>
-                    <TableCell style={styles.cellStyle} align="right">
-                      {row.amount_to_withdraw}
+                    <TableCell style={styles.cellStyle} align="left">
+                      {row.amount_to_withdraw} USDT
                     </TableCell>
-                    <TableCell style={styles.cellStyle} align="right">
+                    <TableCell style={styles.cellStyle} align="left">
                       {row.approved
                         ? "Successful"
                         : row.rejected

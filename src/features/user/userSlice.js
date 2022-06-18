@@ -32,6 +32,9 @@ export const userSlice = createSlice({
           updateWithdrawalHistory: (state, action)=>{
             state.withdrawalHistory = action.payload
           },
+          updateUsersList: (state, action)=>{
+            state.userList = action.payload
+          },
           logOutUser: (state) => {
             state.refreshToken = ""
             state.token = ""
@@ -44,7 +47,7 @@ export const userSlice = createSlice({
     }
 })
 
-export const {updateUser, updateToken, updateUserFetching, logOutUser, updateRefreshToken, updateDepositHistory, updateWithdrawalHistory} =
+export const {updateUser, updateToken, updateUserFetching, logOutUser, updateRefreshToken, updateDepositHistory, updateWithdrawalHistory, updateUsersList} =
   userSlice.actions;
 
 export default userSlice.reducer;

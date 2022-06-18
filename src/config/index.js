@@ -8,7 +8,8 @@ const paths = {
     invitedUsers: "auth/invites",
     depositList: "wallet/deposits",
     withdrawalList: "wallet/withdraws",
-    update: "update/"
+    update: "update/",
+    users: "auth/users/"
 }
 
 export {baseUrl, paths}
