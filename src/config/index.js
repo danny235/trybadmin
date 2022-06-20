@@ -9,7 +9,12 @@ const paths = {
     depositList: "wallet/deposits",
     withdrawalList: "wallet/withdraws",
     update: "update/",
-    users: "auth/users/"
+    users: "auth/users/", 
+    betStats: "bet/stats",
+    betList: "list/",
+    betStatsUpdate: "update",
+    betSession: "bet/1234/session/",
+    createSession: "bet/1234/session/create/"
 }
 
 export {baseUrl, paths}

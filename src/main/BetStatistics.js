@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   OptionCircle,
@@ -8,12 +8,113 @@ import {
 import { colors } from "../components/colors";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import Backdrop from "@mui/material/Backdrop";
+import Dialog from "@mui/material/Dialog";
+import { useCountdown } from "../hooks/useCountdown";
+import { updateBetStatsList } from "../features/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import axios from "axios";
+import { baseUrl, paths } from "../config";
+import { toast } from "react-toastify";
 
 const BetStatistics = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  
+  const [startTime, setStartTime] = useState(0);
+  const [close, setClose] = useState(false);
+  const [betValues, setBetValues] = useState({
+    bet_type: "",
+    bet_slug: null
+  })
+  let FIVE_MINUTES_IN_S = startTime * 60;
+  const [stats, setStats] = useState({
+    small_win: false,
+    big_win: false,
+  });
+  const { token, betStatsList } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const fetchBetsStats = async () => {
+    try {
+      const { data, status } = await axios.get(
+        `${baseUrl}/${paths.betStats}/${paths.betList}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (status === 200) {
+        dispatch(updateBetStatsList(data[data?.length - 1]));
+      }
+      // console.log(data[data?.length-1])
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const createNewSession = async () => {
+    try {
+      const { data, status } = axios.put(`${baseUrl}/${paths.createSession}`, {
+        session_started: true,
+      });
+      if (status === 200) {
+        toast.success("New bet session created");
+      }
+      console.log(data);
+    } catch (err) {
+      toast.error(err.message);
+      console.log(err.message);
+    }
+  };
+
+  const updateBetsStats = async (stats, slug) => {
+    try {
+      const { data, status } = await axios.patch(
+        `${baseUrl}/${paths.betStats}/${paths.betStatsUpdate}/${slug}/`,
+        stats,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (status === 200) {
+        toast.success("Bets compiled");
+        createNewSession();
+      }
+      console.log(data);
+    } catch (err) {
+      console.log(err.message);
+      toast.error(err.message);
+    }
+  };
+
+  const fetchCurrentSession = async () => {
+    try{
+
+      const { data, status } = await axios.get(`${baseUrl}/${paths.betSession}`);
+      console.log(data, status);
+      let time
+      if (status === 200) {
+        setBetValues({...betValues, bet_slug: data?.current_session_slug})
+        
+        time = parseFloat(data?.remaining_time)
+        setStartTime(time)
+      }
+    } catch(err) {
+      console.log(err.message)
+    }
+  };
+
+  useEffect(() => {
+    fetchBetsStats();
+    fetchCurrentSession()
+
+  }, []);
+
+  const [minutes, seconds] = useCountdown(FIVE_MINUTES_IN_S);
+
+  const timeLeft = minutes + seconds;
   return (
     <Container>
       <div
@@ -43,24 +144,41 @@ const BetStatistics = () => {
           <OptionCircle color={colors.secondary}>
             <h1>Big</h1>
           </OptionCircle>
-          <h2 style={styles.betAmountText}>500</h2>
+          <h2 style={styles.betAmountText}>{betStatsList?.big?.length}</h2>
         </div>
         <h1 style={{ fontSize: 60 }}>-</h1>
         <div>
           <OptionCircle color={colors.red}>
             <h1>Small</h1>
           </OptionCircle>
-          <h2 style={styles.betAmountText}>1000</h2>
+          <h2 style={styles.betAmountText}>{betStatsList?.small?.length}</h2>
         </div>
       </div>
-      <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
-        <p>Time remaining:</p>
-        <p>2:59</p>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <p>{`Time remaining: ${minutes}:${seconds}`}</p>
       </div>
-      <div style={{display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", marginTop: 20, marginBottom: 20}}>
-        <h2 style={{textAlign: "center"}}>Ratio</h2>
-        <h3 style={{textAlign: "center", fontWeight: "400"}}>Big : Small = 500 : 1000</h3>
-        <h2 style={{textAlign: "center"}}>Choose which to win/loose</h2>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          marginTop: 20,
+          marginBottom: 20,
+        }}
+      >
+        <h2 style={{ textAlign: "center" }}>Ratio</h2>
+        <h3 style={{ textAlign: "center", fontWeight: "400" }}>
+          Big : Small = {betStatsList?.big?.length} :{" "}
+          {betStatsList?.small?.length}
+        </h3>
+        <h2 style={{ textAlign: "center" }}>Choose which to win/loose</h2>
       </div>
       <div
         style={{
@@ -73,17 +191,44 @@ const BetStatistics = () => {
       >
         <CustomColoredBtn
           bgColor={colors.secondary}
-          onClick={() => setOpen(true)}
+          onClick={() => {
+            setStats({ small_win: false, big_win: true });
+            setOpen(true);
+            
+          }}
         >
           Big
         </CustomColoredBtn>
         <h5>or</h5>
-        <CustomColoredBtn bgColor={colors.red} onClick={() => setOpen(true)}>
+        <CustomColoredBtn
+          bgColor={colors.red}
+          onClick={() => {
+            setStats({ small_win: true, big_win: false });
+            setOpen(true);
+            
+          }}
+        >
           Small
         </CustomColoredBtn>
       </div>
-      <Backdrop open={open}>
-        <CustomModal height={300} width={85}>
+      {timeLeft === "0000" ? (
+        <p
+          style={{ color: colors.red, fontWeight: "bold", textAlign: "center" }}
+        >
+          Please compile bets!
+        </p>
+      ) : null}
+      <Dialog fullWidth onBackdropClick={() => setOpen(false)} open={open}>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "center",
+            height: 200,
+          }}
+        >
           <h3 style={{ textAlign: "center", marginBottom: 10 }}>
             Do you want to continue?
           </h3>
@@ -93,12 +238,16 @@ const BetStatistics = () => {
               justifyContent: "space-between",
               gap: 25,
               marginBottom: 15,
-              alignItems: 'center'
+              alignItems: "center",
             }}
           >
             <CustomColoredBtn
               bgColor={colors.secondary}
-              onClick={() => setOpen(true)}
+              onClick={() => {
+                setOpen(true)
+                console.log(stats);
+                updateBetsStats(stats, betStatsList?.slug)
+              }}
             >
               Yes
             </CustomColoredBtn>
@@ -110,8 +259,8 @@ const BetStatistics = () => {
               No
             </CustomColoredBtn>
           </div>
-        </CustomModal>
-      </Backdrop>
+        </div>
+      </Dialog>
     </Container>
   );
 };
@@ -120,8 +269,7 @@ const styles = {
   betAmountText: {
     textAlign: "center",
     fontSize: 18,
-  }
-
+  },
 };
 
 export default BetStatistics;

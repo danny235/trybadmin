@@ -89,7 +89,7 @@ const WithdrawalHistory = () => {
               alignItems: "center",
               gap: 10,
               height: 420,
-              paddingTop: 40,
+              padding: 40,
             }}
           >
             <Icon
@@ -105,13 +105,13 @@ const WithdrawalHistory = () => {
                 style={{
                   fontWeight: "bold",
                   wordWrap: "break-word",
-                  width: "90%",
+                  width: "80%",
                   textAlign: "center",
                 }}
               >
                 {modalItem?.wallet_address}{" "}
               </p>
-              <div>
+              <div style={{paddingTop:10}}>
                 <CopyToClipboard
                   text={modalItem?.wallet_address}
                   onCopy={() => {
