@@ -20,7 +20,7 @@ const BetStatistics = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [startTime, setStartTime] = useState(0);
-  const [close, setClose] = useState(false);
+  const [closeSession, setCloseSession] = useState(false);
   const [betValues, setBetValues] = useState({
     bet_type: "",
     bet_slug: null,
@@ -68,6 +68,7 @@ const BetStatistics = () => {
   };
 
   const updateBetsStats = async (stats, slug) => {
+    setCloseSession(true)
     try {
       const { data, status } = await axios.patch(
         `${baseUrl}/${paths.betStats}/${paths.betStatsUpdate}/${slug}/`,
@@ -79,11 +80,15 @@ const BetStatistics = () => {
         }
       );
       if (status === 200) {
+        setOpen(false)
+        setCloseSession(false)
         toast.success("Bets compiled");
         createNewSession();
       }
       console.log(data);
     } catch (err) {
+      setOpen(false)
+      setCloseSession(false)
       console.log(err.message);
       toast.error(err.message);
     }
@@ -249,6 +254,7 @@ const BetStatistics = () => {
                 console.log(stats);
                 updateBetsStats(stats, betStatsList?.slug);
               }}
+              disabled={closeSession}
             >
               Yes
             </CustomColoredBtn>
@@ -256,6 +262,7 @@ const BetStatistics = () => {
             <CustomColoredBtn
               bgColor={colors.red}
               onClick={() => setOpen(false)}
+              disabled={closeSession}
             >
               No
             </CustomColoredBtn>
