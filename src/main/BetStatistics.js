@@ -23,9 +23,9 @@ const BetStatistics = () => {
   const [close, setClose] = useState(false);
   const [betValues, setBetValues] = useState({
     bet_type: "",
-    bet_slug: null
-  })
-  let FIVE_MINUTES_IN_S = startTime * 60;
+    bet_slug: null,
+  });
+  let FIVE_MINUTES_IN_S = startTime;
   const [stats, setStats] = useState({
     small_win: false,
     big_win: false,
@@ -90,26 +90,29 @@ const BetStatistics = () => {
   };
 
   const fetchCurrentSession = async () => {
-    try{
-
-      const { data, status } = await axios.get(`${baseUrl}/${paths.betSession}`);
-      console.log(data, status);
-      let time
+    try {
+      const { data, status } = await axios.get(
+        `${baseUrl}/${paths.betSession}`
+      );
+      // console.log(data, status);
+      let time;
       if (status === 200) {
-        setBetValues({...betValues, bet_slug: data?.current_session_slug})
-        
-        time = parseFloat(data?.remaining_time)
-        setStartTime(time)
+        setBetValues({ ...betValues, bet_slug: data?.current_session_slug });
+
+        time = parseFloat(data?.remaining_time);
+        setStartTime(time);
       }
-    } catch(err) {
-      console.log(err.message)
+    } catch (err) {
+      console.log(err.message);
     }
   };
 
   useEffect(() => {
     fetchBetsStats();
-    fetchCurrentSession()
+    fetchCurrentSession();
 
+    const interval = setInterval(() => fetchBetsStats(), 40 * 1000);
+    return () => clearInterval(interval);
   }, []);
 
   const [minutes, seconds] = useCountdown(FIVE_MINUTES_IN_S);
@@ -194,7 +197,6 @@ const BetStatistics = () => {
           onClick={() => {
             setStats({ small_win: false, big_win: true });
             setOpen(true);
-            
           }}
         >
           Big
@@ -205,7 +207,6 @@ const BetStatistics = () => {
           onClick={() => {
             setStats({ small_win: true, big_win: false });
             setOpen(true);
-            
           }}
         >
           Small
@@ -244,9 +245,9 @@ const BetStatistics = () => {
             <CustomColoredBtn
               bgColor={colors.secondary}
               onClick={() => {
-                setOpen(true)
+                setOpen(true);
                 console.log(stats);
-                updateBetsStats(stats, betStatsList?.slug)
+                updateBetsStats(stats, betStatsList?.slug);
               }}
             >
               Yes

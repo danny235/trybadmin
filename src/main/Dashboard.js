@@ -13,13 +13,13 @@ import {
 import { baseUrl, paths } from "../config/index";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUser, updateUserFetching } from "../features/user/userSlice";
+import { updateUser, updateUserFetching, updateBalance } from "../features/user/userSlice";
 import { toast } from "react-toastify";
 import { colors } from "../components/colors";
 
 const Dashboard = () => {
-  const [showMenu, setShowMenu] = useState(false);
-  const { userProfile, token } = useSelector((state) => state.user);
+ 
+  const {  token, balance } = useSelector((state) => state.user);
   const menuRoutes = [
     {
       id: 1,
@@ -53,27 +53,25 @@ const Dashboard = () => {
       // route: "#",
     },
   ];
-  const navigate = useNavigate();
-  // const dispatch = useDispatch();
-  // const fetchUser = async () => {
-  //   try {
-  //     dispatch(updateUserFetching(true));
-  //     const response = await axios.get(`${baseUrl}/${paths.currentUser}`, {
-  //       headers: { Authorization: `Bearer ${token}` },
-  //     });
+  const dispatch = useDispatch();
+  const fetchBalance = async () => {
+    try {
+      const {data, status} = await axios.get(`${baseUrl}/${paths.balance}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-  //     if (response.status === 200) {
-  //       dispatch(updateUser(response.data));
-  //       dispatch(updateUserFetching(false));
-  //     }
-  //   } catch (err) {
-  //     dispatch(updateUserFetching(false));
-  //     toast.error(err.message);
-  //   }
-  // };
-  // useEffect(() => {
-  //   fetchUser();
-  // }, [token]);
+      if (status === 200) {
+        dispatch(updateBalance(data?.total_current_balance?.total));
+   
+      }
+    } catch (err) {
+      
+      toast.error(err.message);
+    }
+  };
+  useEffect(() => {
+    fetchBalance();
+  }, [token]);
 
   return (
     <div>
@@ -82,7 +80,7 @@ const Dashboard = () => {
       </div>
       <div style={{display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center"}}>
         <h1>Total balance</h1>
-        <h1>$200,000</h1>
+        <h1>{balance !== "" ? balance : "****"} USDT</h1>
       </div>
     
       <div style={styles.menuListContainer}>

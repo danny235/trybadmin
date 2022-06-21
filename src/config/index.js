@@ -14,7 +14,8 @@ const paths = {
     betList: "list/",
     betStatsUpdate: "update",
     betSession: "bet/1234/session/",
-    createSession: "bet/1234/session/create/"
+    createSession: "bet/1234/session/create/",
+    balance: "wallet/balance/total/"
 }
 
 export {baseUrl, paths}
