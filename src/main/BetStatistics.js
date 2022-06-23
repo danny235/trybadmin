@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useReducer } from "react";
 import {
   Container,
   OptionCircle,
@@ -10,7 +10,10 @@ import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
 import Dialog from "@mui/material/Dialog";
 import { useCountdown } from "../hooks/useCountdown";
-import { updateBetStatsList } from "../features/user/userSlice";
+import {
+  updateBetStatsList,
+  updateBetStatsListDetail,
+} from "../features/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { baseUrl, paths } from "../config";
@@ -30,8 +33,11 @@ const BetStatistics = () => {
     small_win: false,
     big_win: false,
   });
-  const { token, betStatsList } = useSelector((state) => state.user);
+  const { token, betStatsList, betStatsListDetail } = useSelector(
+    (state) => state.user
+  );
   const dispatch = useDispatch();
+  const [reducerValue, forceUpdate] = useReducer((x) => x + 1, 0);
 
   const fetchBetsStats = async () => {
     try {
@@ -51,24 +57,54 @@ const BetStatistics = () => {
       console.log(err);
     }
   };
-
-  const createNewSession = async () => {
+  const fetchBetsStatsDetail = async (slug) => {
     try {
-      const { data, status } = axios.put(`${baseUrl}/${paths.createSession}`, {
-        session_started: true,
-      });
+      const { data, status } = await axios.get(
+        `${baseUrl}/${paths.totalBets}/${slug}/`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       if (status === 200) {
-        toast.success("New bet session created");
+        dispatch(updateBetStatsListDetail(data));
       }
       console.log(data);
     } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const createNewSession = async () => {
+    setCloseSession(true);
+    try {
+      const { data, status } = await axios.put(
+        `${baseUrl}/${paths.createSession}`,
+        {
+          session_started: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log(data);
+      if (status === 200) {
+        setCloseSession(false);
+        toast.success("New bet session created");
+        forceUpdate();
+      }
+    } catch (err) {
+      setCloseSession(false);
       toast.error(err.message);
       console.log(err.message);
     }
   };
 
   const updateBetsStats = async (stats, slug) => {
-    setCloseSession(true)
+    setCloseSession(true);
     try {
       const { data, status } = await axios.patch(
         `${baseUrl}/${paths.betStats}/${paths.betStatsUpdate}/${slug}/`,
@@ -80,15 +116,14 @@ const BetStatistics = () => {
         }
       );
       if (status === 200) {
-        setOpen(false)
-        setCloseSession(false)
+        setOpen(false);
+        setCloseSession(false);
         toast.success("Bets compiled");
-        createNewSession();
       }
       console.log(data);
     } catch (err) {
-      setOpen(false)
-      setCloseSession(false)
+      setOpen(false);
+      setCloseSession(false);
       console.log(err.message);
       toast.error(err.message);
     }
@@ -97,7 +132,12 @@ const BetStatistics = () => {
   const fetchCurrentSession = async () => {
     try {
       const { data, status } = await axios.get(
-        `${baseUrl}/${paths.betSession}`
+        `${baseUrl}/${paths.betSession}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       // console.log(data, status);
       let time;
@@ -114,11 +154,20 @@ const BetStatistics = () => {
 
   useEffect(() => {
     fetchBetsStats();
+    fetchBetsStatsDetail(betStatsList?.slug);
     fetchCurrentSession();
 
-    const interval = setInterval(() => fetchBetsStats(), 40 * 1000);
+    const interval = setInterval(() => {
+      fetchBetsStats();
+      fetchBetsStatsDetail(betStatsList?.slug);
+    }, 40 * 1000);
     return () => clearInterval(interval);
   }, []);
+  useEffect(() => {
+    fetchBetsStats();
+    fetchBetsStatsDetail(betStatsList?.slug);
+    fetchCurrentSession();
+  }, [reducerValue]);
 
   const [minutes, seconds] = useCountdown(FIVE_MINUTES_IN_S);
 
@@ -152,14 +201,18 @@ const BetStatistics = () => {
           <OptionCircle color={colors.secondary}>
             <h1>Big</h1>
           </OptionCircle>
-          <h2 style={styles.betAmountText}>{betStatsList?.big?.length}</h2>
+          <h2 style={styles.betAmountText}>
+            {betStatsListDetail?.total_amount_big}
+          </h2>
         </div>
         <h1 style={{ fontSize: 60 }}>-</h1>
         <div>
           <OptionCircle color={colors.red}>
             <h1>Small</h1>
           </OptionCircle>
-          <h2 style={styles.betAmountText}>{betStatsList?.small?.length}</h2>
+          <h2 style={styles.betAmountText}>
+            {betStatsListDetail?.total_amount_small}
+          </h2>
         </div>
       </div>
       <div
@@ -167,9 +220,20 @@ const BetStatistics = () => {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
+          flexDirection: "column",
         }}
       >
         <p>{`Time remaining: ${minutes}:${seconds}`}</p>
+        <CustomColoredBtn
+          bgColor={colors.secondary}
+          onClick={() => {
+            createNewSession();
+          }}
+          style={{ width: "80%", marginTop: 10 }}
+          disabled={closeSession}
+        >
+          {closeSession ? "Restarting..." : "Restart timer"}
+        </CustomColoredBtn>
       </div>
       <div
         style={{
@@ -183,8 +247,8 @@ const BetStatistics = () => {
       >
         <h2 style={{ textAlign: "center" }}>Ratio</h2>
         <h3 style={{ textAlign: "center", fontWeight: "400" }}>
-          Big : Small = {betStatsList?.big?.length} :{" "}
-          {betStatsList?.small?.length}
+          Big : Small = {betStatsListDetail?.total_amount_big} :{" "}
+          {betStatsListDetail?.total_amount_small}
         </h3>
         <h2 style={{ textAlign: "center" }}>Choose which to win/loose</h2>
       </div>

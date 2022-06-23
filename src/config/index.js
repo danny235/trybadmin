@@ -1,4 +1,4 @@
-const baseUrl = "https://trybeapp.herokuapp.com"
+const baseUrl = "https://api.trybnetwork.com"
 
 const paths = {
     login: "auth/login/",
@@ -15,7 +15,8 @@ const paths = {
     betStatsUpdate: "update",
     betSession: "bet/1234/session/",
     createSession: "bet/1234/session/create/",
-    balance: "wallet/balance/total/"
+    balance: "wallet/balance/total/",
+    totalBets: "bet/stats/detail"
 }
 
 export {baseUrl, paths}
