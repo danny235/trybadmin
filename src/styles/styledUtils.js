@@ -27,7 +27,6 @@ const SecondaryBtn = styled.button`
   font-size: 17px;
   font-weight: bold;
   cursor: pointer;
-  padding-top: 15px;
 `;
 
 const WhiteBtn = styled(SecondaryBtn)`

@@ -216,6 +216,7 @@ const DepositHistory = () => {
                     <CustomColoredBtn
                       bgColor={colors.secondary}
                       style={{ fontSize: 10, fontWeight: "400", width: 50 }}
+                      disabled={updating}
                       onClick={() =>
                         updateDeposit(
                           { approved: true, rejected: false },
@@ -230,6 +231,7 @@ const DepositHistory = () => {
                     <CustomColoredBtn
                       bgColor={colors.red}
                       style={{ fontSize: 10, fontWeight: "400", width: 50 }}
+                      disabled={updating}
                       onClick={() =>
                         updateDeposit(
                           { rejected: true, approved: false },

@@ -28,19 +28,25 @@ const Login = () => {
   const handleSubmit = async (person) => {
     try {
       setIsFetching(true);
-      const response = await axios.post(`${baseUrl}/${paths.login}`, person);
-      console.log(response);
+      const {data, status} = await axios.post(`${baseUrl}/${paths.login}`, person);
+      
 
-      if (response.status === 200) {
-        dispatch(updateToken(response.data.access));
-        dispatch(updateRefreshToken(response.data.refresh));
-        toast.success("Successful");
-        setIsFetching(false);
-        navigate("/", { replace: true });
+      if (status === 200) {
+        if(data?.is_superuser) {
+
+          dispatch(updateToken(data.access));
+          dispatch(updateRefreshToken(data.refresh));
+          toast.success("Successful");
+          setIsFetching(false);
+          navigate("/", { replace: true });
+        } else {
+          setIsFetching(false);
+          toast.error("Sorry You're unauthorized")
+        }
       }
     } catch (err) {
       if (err.message === "Request failed with status code 401") {
-        toast.error("Invalid credentials");
+        toast.error(err?.response?.data.detail[0]);
         setIsFetching(false);
         return
       } 
@@ -120,12 +126,7 @@ const Login = () => {
           </div>
         )}
       </Formik>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <p>Don't have an account?</p>{" "}
-        <Link style={styles.linkStyle} to="/signup">
-          Register here
-        </Link>
-      </div>
+     
     </Container>
   );
 };

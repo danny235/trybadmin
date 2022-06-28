@@ -24,6 +24,7 @@ const BetStatistics = () => {
   const [open, setOpen] = useState(false);
   const [startTime, setStartTime] = useState(0);
   const [closeSession, setCloseSession] = useState(false);
+  const [sessionStarted, setSessionStarted] = useState(false)
   const [betValues, setBetValues] = useState({
     bet_type: "",
     bet_slug: null,
@@ -68,9 +69,9 @@ const BetStatistics = () => {
         }
       );
       if (status === 200) {
-        dispatch(updateBetStatsListDetail(data));
+        dispatch(updateBetStatsListDetail(data))
       }
-      console.log(data);
+      // console.log(data);
     } catch (err) {
       console.log(err);
     }
@@ -90,7 +91,7 @@ const BetStatistics = () => {
           },
         }
       );
-      console.log(data);
+      // console.log(data);
       if (status === 200) {
         setCloseSession(false);
         toast.success("New bet session created");
@@ -119,11 +120,22 @@ const BetStatistics = () => {
         setOpen(false);
         setCloseSession(false);
         toast.success("Bets compiled");
+        
       }
-      console.log(data);
+      // console.log(data);
     } catch (err) {
-      setOpen(false);
+      if (err.message === "Request failed with status code 400") {
+        setCloseSession(false);
+        setOpen(false);
+        return toast.error(err?.response?.data?.detail[0]);
+      }
+      if (err.message === "Request failed with status code 404") {
+        setCloseSession(false);
+        setOpen(false);
+        return toast.error(err?.response?.data?.detail[0]);
+      }
       setCloseSession(false);
+      setOpen(false);
       console.log(err.message);
       toast.error(err.message);
     }
@@ -143,7 +155,7 @@ const BetStatistics = () => {
       let time;
       if (status === 200) {
         setBetValues({ ...betValues, bet_slug: data?.current_session_slug });
-
+        setSessionStarted(data?.session_started)
         time = parseFloat(data?.remaining_time);
         setStartTime(time);
       }
@@ -156,11 +168,12 @@ const BetStatistics = () => {
     fetchBetsStats();
     fetchBetsStatsDetail(betStatsList?.slug);
     fetchCurrentSession();
-
+    
     const interval = setInterval(() => {
+      fetchCurrentSession();
       fetchBetsStats();
       fetchBetsStatsDetail(betStatsList?.slug);
-    }, 40 * 1000);
+    }, 60 * 1000);
     return () => clearInterval(interval);
   }, []);
   useEffect(() => {
@@ -172,6 +185,7 @@ const BetStatistics = () => {
   const [minutes, seconds] = useCountdown(FIVE_MINUTES_IN_S);
 
   const timeLeft = minutes + seconds;
+  
   return (
     <Container>
       <div
@@ -230,7 +244,7 @@ const BetStatistics = () => {
             createNewSession();
           }}
           style={{ width: "80%", marginTop: 10 }}
-          disabled={closeSession}
+          disabled={closeSession || sessionStarted ? true : false}
         >
           {closeSession ? "Restarting..." : "Restart timer"}
         </CustomColoredBtn>

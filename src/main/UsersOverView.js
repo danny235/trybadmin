@@ -131,7 +131,7 @@ const UsersOverView = () => {
                       {row.email}
                     </TableCell>
                     <TableCell style={styles.cellStyle} align="left">
-                      {getDate(row?.profile?.date_referred)}
+                      {getDate(row?.profile?.date_joined)}
                     </TableCell>
                     
                   </TableRow>
