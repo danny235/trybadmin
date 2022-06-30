@@ -61,7 +61,8 @@ const Dashboard = () => {
       });
 
       if (status === 200) {
-        dispatch(updateBalance(data?.total_current_balance?.total));
+        const value = parseFloat(data?.total)
+        dispatch(updateBalance(value));
    
       }
     } catch (err) {
